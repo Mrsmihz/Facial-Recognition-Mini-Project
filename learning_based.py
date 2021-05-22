@@ -14,8 +14,8 @@ from torch.autograd import Variable
 from sklearn.metrics import accuracy_score
 import time
 
-TRAIN_ROOT = './data/train'
-TEST_ROOT = './data/test'
+TRAIN_ROOT = './datasets/train'
+TEST_ROOT = './datasets/test'
 PATH = './GoogLeNet.pth'
 
 PRETRAINED_SIZE = 224
@@ -77,11 +77,14 @@ def test_model(test_data, test_loader, model):
         model.eval()
         for data in test_loader:
             images, labels = data
-            outputs = model(images.cuda())
+            if torch.cuda.is_available():
+                images = images.cuda()
+                labels = labels.cuda()
+            outputs = model(images)
             _, predictions = torch.max(outputs, 1)
             # collect the correct predictions for each class
             # plot_images(images, labels, classes, predictions)
-            for label, prediction, image in zip(labels.cuda(), predictions, images.cuda()):
+            for label, prediction, image in zip(labels, predictions, images):
                 if label == prediction:
                     correct_pred[classes[label]] += 1
                 total_pred[classes[label]] += 1
@@ -145,7 +148,7 @@ def getTrainLoader():
 
 def main():
     model = GoogLeNet(aux_logits=False)
-    model.load_state_dict(torch.load(PATH))
+    model.load_state_dict(torch.load(PATH, map_location=torch.device('cpu')))
     criterion = CrossEntropyLoss()
     optimizer = SGD(model.parameters(), lr=0.001, momentum=0.9)
     if torch.cuda.is_available():
@@ -153,11 +156,12 @@ def main():
         criterion = criterion.cuda()
     test_data = getTestData()
     test_loader = getTestLoader()
+    print('start testing model...')
     test_model(test_data=test_data, test_loader=test_loader, model=model)
 
-    train_data = getTrainData()
-    train_loader = getTrainLoader()
-    train_model(data_loader=train_loader, model=model, criterion=criterion, optimizer=optimizer, path=PATH, epochs=1)
+    #train_data = getTrainData()
+    #train_loader = getTrainLoader()
+    #train_model(data_loader=train_loader, model=model, criterion=criterion, optimizer=optimizer, path=PATH, epochs=1)
 
 
 main()
