@@ -32,7 +32,8 @@ python3 handcraft_based.py
 ```
 python3 learning_based.py
 ```
- - train - เรียกใช้ผ่านฟังก์ชั่น ```main()```
+ - train - เรียกใช้ผ่านฟังก์ชั่น ```main(​"train")```
+ - test - เรียกใช้ผ่านฟังก์ชั่น ```main("test")```
 ### เปลี่ยน Datasets
 ![learning path](./assets/imgs/learning_path.png)
 สามารเปลี่ยนได้โดยการ แก้ค่าของตัวแปร TEST_ROOT และ TRAIN_ROOT
