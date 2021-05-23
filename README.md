@@ -13,6 +13,7 @@
 conda install --file requirements.txt
 ```
 ### Datasets
+สามารถดาวน์โหลด Datasets ได้จาก Link ด้านล่างนี้
 <strong>[Datasets](https://drive.google.com/file/d/1qy2POaMjaYG_R7tY9YMd8__fye8KhePf/view?usp=sharing)</strong>
 
 ## Project 2 Handcraft Base
