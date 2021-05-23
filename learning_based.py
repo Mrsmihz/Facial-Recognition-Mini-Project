@@ -1,39 +1,33 @@
 import numpy as np
-import pandas as pd
 import torch
-from tqdm import tqdm
-from skimage.io import imread
 from torchvision import datasets, transforms, utils
 from torch.utils.data import DataLoader, random_split
-import math
 import matplotlib.pyplot as plt
 from GoogLeNet import GoogLeNet
 from torch.optim import Adam, SGD
 from torch.nn import CrossEntropyLoss
-from torch.autograd import Variable
-from sklearn.metrics import accuracy_score
-import time
 
-TRAIN_ROOT = './datasets/train'
-TEST_ROOT = './datasets/test'
-PATH = './GoogLeNet.pth'
 
-PRETRAINED_SIZE = 224
-PRETRAINED_MEANS = [0.485, 0.456, 0.406]
-PRETRAINED_STDS = [0.229, 0.224, 0.225]
-TRAIN_TRANSFORMS = transforms.Compose([
+TRAIN_ROOT = './datasets/train'  # path for train datasets
+TEST_ROOT = './datasets/test'  # path for test datasets
+PATH = './GoogLeNet.pth'  # path for load model
+
+PRETRAINED_SIZE = 224  # define pretrained size
+PRETRAINED_MEANS = [0.485, 0.456, 0.406]  # define pretrained means
+PRETRAINED_STDS = [0.229, 0.224, 0.225]  # define pretrained stds
+TRAIN_TRANSFORMS = transforms.Compose([  # define transforms for train datasets
         transforms.Resize(PRETRAINED_SIZE),
         transforms.RandomRotation(5),
         transforms.RandomHorizontalFlip(0.5),
         transforms.RandomCrop(PRETRAINED_SIZE, padding=10),
         transforms.ToTensor(),
         transforms.Normalize(mean=PRETRAINED_MEANS, std=PRETRAINED_STDS)])
-TEST_TRANSFORMS = transforms.Compose([
+TEST_TRANSFORMS = transforms.Compose([  # define transforms for test datasets
         transforms.Resize(PRETRAINED_SIZE),
         transforms.CenterCrop(PRETRAINED_SIZE),
         transforms.ToTensor(),
         transforms.Normalize(mean=PRETRAINED_MEANS, std=PRETRAINED_STDS)])
-BATCH_SIZE = 40
+BATCH_SIZE = 40  # define batch size
 
 
 def normalize_image(image):
@@ -62,14 +56,8 @@ def plot_images(images, labels, classes, predictions, normalize=True):
     plt.show()
 
 
-# N_IMAGES = 25
-# images, labels = zip(*[(image, label) for image, label in
-#                            [test_data[i] for i in range(N_IMAGES)]])
-# plot_images(images, labels, classes)
-# again no gradients needed
-
-
 def test_model(test_data, test_loader, model):
+    """Function to test the model"""
     classes = test_data.classes
     correct_pred = {classname: 0 for classname in classes}
     total_pred = {classname: 0 for classname in classes}
@@ -84,6 +72,7 @@ def test_model(test_data, test_loader, model):
             _, predictions = torch.max(outputs, 1)
             # collect the correct predictions for each class
             # plot_images(images, labels, classes, predictions)
+            # break
             for label, prediction, image in zip(labels, predictions, images):
                 if label == prediction:
                     correct_pred[classes[label]] += 1
@@ -96,6 +85,7 @@ def test_model(test_data, test_loader, model):
 
 
 def train_model(data_loader, model, criterion, optimizer, path, epochs=1):
+    """Function to train the model"""
     for epoch in range(epochs):  # loop over the dataset multiple times
         running_loss = 0.0
         model.train()
@@ -115,7 +105,7 @@ def train_model(data_loader, model, criterion, optimizer, path, epochs=1):
 
             # print statistics
             running_loss += loss.item()
-            if i % 100 == 0:  # print every 2000 mini-batches
+            if i % 100 == 0:  # print every 100 mini-batches
                 print('[%d, %5d] loss: %.3f' %
                       (epoch + 1, i + 1, running_loss / 100))
                 running_loss = 0.0
@@ -132,7 +122,6 @@ def getTestLoader():
     test_data = getTestData()
     test_loader = DataLoader(test_data, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
     return test_loader
-
 
 
 def getTrainData():
@@ -154,15 +143,19 @@ def main():
     if torch.cuda.is_available():
         model = model.cuda()
         criterion = criterion.cuda()
+
+    # test model
     test_data = getTestData()
     test_loader = getTestLoader()
     print('start testing model...')
     test_model(test_data=test_data, test_loader=test_loader, model=model)
 
-    #train_data = getTrainData()
-    #train_loader = getTrainLoader()
-    #train_model(data_loader=train_loader, model=model, criterion=criterion, optimizer=optimizer, path=PATH, epochs=1)
+    # train model
+    # train_data = getTrainData()
+    # train_loader = getTrainLoader()
+    # train_model(data_loader=train_loader, model=model, criterion=criterion, optimizer=optimizer, path=PATH, epochs=1)
 
 
 main()
+
 
