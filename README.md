@@ -13,4 +13,4 @@ python handcraft_based.py
 โดยต้องทำการแตกไฟล์ datasets ก่อน โดยสามารถโหลดได้จากลิงค์ข้างล่าง
 | Name |
 | --- |
-| <a href="www.google.co.th">Datasets</a> |
+| [Datasets](www.google.co.th)
