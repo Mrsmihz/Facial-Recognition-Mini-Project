@@ -5,6 +5,7 @@ import numpy as np
 import tqdm as t
 import sklearn.svm as svm
 from joblib import load, dump
+import matplotlib.pyplot as plt
 import os
 
 # กำหนด IMAGE SIZE
@@ -13,30 +14,37 @@ IMAGE_SIZE = (64, 128)
 # เรียกใช้ HOG โดยใช้ค่า Default
 HOG = cv2.HOGDescriptor()
 
-# กำหนดชื่อ CLASS
-CLASSES = [name for name in os.listdir('./datasets/handcraft_train/') if name != '.DS_Store']
-CLASSES.sort()
-TEST_PATH = "./datasets/test/"
+# path for datasets
+TEST_PATH = "./datasets/handcraft_test/"
 TRAIN_PATH = "./datasets/handcraft_train/"
+MODEL_PATH = './handcraft_model.sav'
+
+# get class sub-directory name
+TRAIN_CLASSES = [name for name in os.listdir(TRAIN_PATH) if name != '.DS_Store']
+TRAIN_CLASSES.sort()
+
+TEST_CLASSES = [name for name in os.listdir(TEST_PATH) if name != '.DS_Store']
+TEST_CLASSES.sort()
+
 
 # Train Model
 def train():
     sample_size = 0
     features = []
     labels = []
-    for _classname in t.tqdm(range(len(CLASSES))):
+    for _classname in t.tqdm(range(len(TRAIN_CLASSES))):
 
         # อ่านไฟล์
-        filenames = glob.glob(TRAIN_PATH+CLASSES[_classname]+"/*.*")
+        filenames = glob.glob(TRAIN_PATH + TRAIN_CLASSES[_classname] + "/*.*")
         images = [cv2.imread(img) for img in filenames]
         sample_size += len(images)
         for img in images:
             # Resize Image
             img = cv2.resize(img, IMAGE_SIZE, interpolation=cv2.INTER_AREA)
             # 37 - 42 เป็นกระบวนการทำ Image processing
-            # img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             # img = opening(img)
-            # img = closing(img)
+            img = closing(img)
             # img = erosion(img)
             # img = dilation(img)
             # img = canny(img)
@@ -45,27 +53,27 @@ def train():
             labels.append(_classname)
     features = np.reshape(np.array(features), (sample_size, -1))
 
-    #Classifier
+    # Classifier
     classifier = svm.SVC(kernel='sigmoid', C=1, decision_function_shape='ovo')
     classifier.fit(features, labels)
     dump(classifier, 'handcraft_model.sav')
 
 
 def test():
-    classifier = load('handcraft_model.sav')
+    classifier = load(MODEL_PATH)
     correct = 0
     fail = 0
-    for _classname in t.tqdm(range(len(CLASSES))):
-        filenames = glob.glob(TEST_PATH+CLASSES[_classname]+"/*.*")
+    for _classname in t.tqdm(range(len(TEST_CLASSES))):
+        filenames = glob.glob(TEST_PATH + TEST_CLASSES[_classname] + "/*.*")
         # อ่านไฟล์
         images = [cv2.imread(img) for img in filenames]
         for img in images:
             # Resize
             img = cv2.resize(img, IMAGE_SIZE, interpolation=cv2.INTER_AREA)
             # 66 - 71 กระบวนการทำ Image Processing
-            # img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             # img = opening(img)
-            # img = closing(img)
+            img = closing(img)
             # img = erosion(img)
             # img = dilation(img)
             # img = canny(img)
@@ -75,11 +83,10 @@ def test():
                 correct += 1
             else:
                 fail += 1
-
         # คำนวณหา %
         total_correct = (correct / (correct + fail))*100
         total_fail = (fail / (correct + fail))*100
-        print(f"{CLASSES[_classname]} \n Success Rate: {total_correct:.2f} \n Failure Rate: {total_fail:.2f}")
+        print(f"{TEST_CLASSES[_classname]} \n Success Rate: {total_correct:.2f} \n Failure Rate: {total_fail:.2f}")
         correct = 0
         fail = 0
 
@@ -120,5 +127,5 @@ def dilation(img):
     return dilated
 
 
-train()
+#train()
 test()

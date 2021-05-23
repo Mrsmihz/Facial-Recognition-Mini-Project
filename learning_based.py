@@ -1,11 +1,12 @@
 import numpy as np
-import torch
 from torchvision import datasets, transforms, utils
 from torch.utils.data import DataLoader, random_split
 import matplotlib.pyplot as plt
 from GoogLeNet import GoogLeNet
 from torch.optim import Adam, SGD
 from torch.nn import CrossEntropyLoss
+import torch
+
 
 
 TRAIN_ROOT = './datasets/train'  # path for train datasets
@@ -135,7 +136,7 @@ def getTrainLoader():
     return train_loader
 
 
-def main():
+def run(operation):
     model = GoogLeNet(aux_logits=False)
     model.load_state_dict(torch.load(PATH, map_location=torch.device('cpu')))
     criterion = CrossEntropyLoss()
@@ -143,19 +144,19 @@ def main():
     if torch.cuda.is_available():
         model = model.cuda()
         criterion = criterion.cuda()
+    if operation == 'test':
+        # test model
+        test_data = getTestData()
+        test_loader = getTestLoader()
+        print('start testing model...')
+        test_model(test_data=test_data, test_loader=test_loader, model=model)
+    elif operation == 'train':
+        # train model
+        # train_data = getTrainData()
+        train_loader = getTrainLoader()
+        train_model(data_loader=train_loader, model=model, criterion=criterion, optimizer=optimizer, path=PATH, epochs=1)
 
-    # test model
-    test_data = getTestData()
-    test_loader = getTestLoader()
-    print('start testing model...')
-    test_model(test_data=test_data, test_loader=test_loader, model=model)
 
-    # train model
-    # train_data = getTrainData()
-    # train_loader = getTrainLoader()
-    # train_model(data_loader=train_loader, model=model, criterion=criterion, optimizer=optimizer, path=PATH, epochs=1)
-
-
-main()
+run(operation='test')
 
 
