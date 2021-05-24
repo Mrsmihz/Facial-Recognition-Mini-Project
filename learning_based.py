@@ -10,7 +10,7 @@ import torch
 
 
 TRAIN_ROOT = './datasets/train'  # path for train datasets
-TEST_ROOT = './datasets/test'  # path for test datasets
+TEST_ROOT = './datasets/test2'  # path for test datasets
 PATH = './GoogLeNet.pth'  # path for load model
 
 PRETRAINED_SIZE = 224  # define pretrained size
