@@ -6,11 +6,11 @@ from GoogLeNet import GoogLeNet
 from torch.optim import Adam, SGD
 from torch.nn import CrossEntropyLoss
 import torch
-
+import random
 
 
 TRAIN_ROOT = './datasets/train'  # path for train datasets
-TEST_ROOT = './datasets/test2'  # path for test datasets
+TEST_ROOT = './datasets/test'  # path for test datasets
 PATH = './GoogLeNet.pth'  # path for load model
 
 PRETRAINED_SIZE = 224  # define pretrained size
@@ -21,6 +21,10 @@ TRAIN_TRANSFORMS = transforms.Compose([  # define transforms for train datasets
         transforms.RandomRotation(5),
         transforms.RandomHorizontalFlip(0.5),
         transforms.RandomCrop(PRETRAINED_SIZE, padding=10),
+        transforms.RandomVerticalFlip(0.5),
+        transforms.RandomRotation(random.randint(0, 360)),
+        transforms.RandomGrayScale(0.1),
+        transforms.RandomErasing(0.5),
         transforms.ToTensor(),
         transforms.Normalize(mean=PRETRAINED_MEANS, std=PRETRAINED_STDS)])
 TEST_TRANSFORMS = transforms.Compose([  # define transforms for test datasets
@@ -90,6 +94,7 @@ def train_model(data_loader, model, criterion, optimizer, path, epochs=1):
     for epoch in range(epochs):  # loop over the dataset multiple times
         running_loss = 0.0
         model.train()
+        data_loader = getTrainLoader()
         for i, data in enumerate(data_loader, 0):
             # get the inputs; data is a list of [inputs, labels]
             inputs, labels = data
@@ -154,9 +159,10 @@ def run(operation):
         # train model
         # train_data = getTrainData()
         train_loader = getTrainLoader()
-        train_model(data_loader=train_loader, model=model, criterion=criterion, optimizer=optimizer, path=PATH, epochs=1)
+        train_model(data_loader=train_loader, model=model, criterion=criterion, optimizer=optimizer, path=PATH,
+                    epochs=1000)
 
 
-run(operation='test')
+run(operation='train')
 
 
