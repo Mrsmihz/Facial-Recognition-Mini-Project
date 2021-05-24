@@ -231,5 +231,5 @@ def dilation(img):
     return dilated
 
 
-train(epoch=100)
+#train(epoch=100)
 test()
