@@ -14,6 +14,7 @@ conda install --file requirements.txt
 ```
 ### Pretrained Model
 <strong>[Handcraft Base Model](https://drive.google.com/file/d/127xDnKjgnsZlmpXgaeqtuatYAunfnDyv/view?usp=sharing)</strong>
+<br>
 <strong>[Learning Base Model](https://drive.google.com/file/d/1Jf-eA_XX8v3wWNptgLSTQBfs_F1Ru6gE/view?usp=sharing)</strong>
 
 ## Project 2 Handcraft Base
