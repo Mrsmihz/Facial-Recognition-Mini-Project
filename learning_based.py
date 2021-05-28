@@ -23,8 +23,8 @@ TRAIN_TRANSFORMS = transforms.Compose([  # define transforms for train datasets
         transforms.RandomCrop(PRETRAINED_SIZE, padding=10),
         transforms.RandomVerticalFlip(0.5),
         transforms.RandomRotation(random.randint(0, 360)),
-        transforms.RandomGrayScale(0.1),
-        transforms.RandomErasing(0.5),
+        transforms.RandomGrayscale(0.1),
+        #transforms.RandomErasing(0.5),
         transforms.ToTensor(),
         transforms.Normalize(mean=PRETRAINED_MEANS, std=PRETRAINED_STDS)])
 TEST_TRANSFORMS = transforms.Compose([  # define transforms for test datasets
@@ -163,6 +163,6 @@ def run(operation):
                     epochs=1000)
 
 
-run(operation='train')
+run(operation='test')
 
 

@@ -12,9 +12,9 @@
 ```
 conda install --file requirements.txt
 ```
-### Datasets
-สามารถดาวน์โหลด Datasets ได้จาก Link ด้านล่างนี้
-<strong>[Datasets](https://drive.google.com/file/d/1qy2POaMjaYG_R7tY9YMd8__fye8KhePf/view?usp=sharing)</strong>
+### Pretrained Model
+<strong>[Handcraft Base Model](https://drive.google.com/file/d/127xDnKjgnsZlmpXgaeqtuatYAunfnDyv/view?usp=sharing)</strong>
+<strong>[Learning Base Model](https://drive.google.com/file/d/1Jf-eA_XX8v3wWNptgLSTQBfs_F1Ru6gE/view?usp=sharing)</strong>
 
 ## Project 2 Handcraft Base
 ### How to Run
